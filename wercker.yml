@@ -7,8 +7,8 @@ build:
     - script:
       name: Build
       code: |
-          ./fips gen linux-make-unittest
-          ./fips build linux-make-unittest
+          ./fips set config linux-make-unittest
+          ./fips build 
           ./fips run test_messageTest
           ./fips run test_filechangeTest
           ./fips run test_ioTest
