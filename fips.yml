@@ -1,3 +1,9 @@
 imports:
-    fips-googletest:
-        git: https://github.com/amarburg/fips-googletest.git
+  fips-googletest:
+    git: https://github.com/amarburg/fips-googletest.git
+
+exports:
+  header-dirs:
+    - src/
+  modules:
+    g3logger: .

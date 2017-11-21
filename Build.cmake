@@ -104,27 +104,15 @@ ENDIF (MSVC OR MINGW)
 
 set(SRC_FILES ${SRC_FILES} ${SRC_PLATFORM_SPECIFIC})
 
+MESSAGE( STATUC "Src files: ${SRC_FILES}" )
+
 # Create the g3log library
 INCLUDE_DIRECTORIES(${LOG_SRC})
 SET(G3LOG_LIBRARY g3logger)
 
-# Temporarily disable shared library creation
-#  IF( G3_SHARED_LIB )
-#     IF( WIN32 )
-#        IF(NOT(CMAKE_VERSION LESS 3.4))
-#           set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-#        ELSE()
-#           message( FATAL_ERROR "Need CMake version >=3.4 to build shared windows library!" )
-#        ENDIF()
-#     ENDIF()
-#     #ADD_LIBRARY(${G3LOG_LIBRARY} SHARED ${SRC_FILES})
-#  ELSE()
-  #ADD_LIBRARY(${G3LOG_LIBRARY} STATIC ${SRC_FILES})
-
-  FIPS_BEGIN_MODULE( ${G3LOG_LIBRARY} )
-    fips_files( ${SRC_FILES} )
-  FIPS_END_MODULE()
-#  ENDIF()
+FIPS_BEGIN_MODULE( ${G3LOG_LIBRARY} )
+  fips_files( ${SRC_FILES} )
+FIPS_END_MODULE()
 
 SET(${G3LOG_LIBRARY}_VERSION_STRING ${VERSION})
 MESSAGE( STATUS "Creating ${G3LOG_LIBRARY} VERSION: ${VERSION}" )
@@ -143,3 +131,18 @@ TARGET_LINK_LIBRARIES(${G3LOG_LIBRARY} ${PLATFORM_LINK_LIBRIES})
 
 # Kjell: This is likely not necessary, except for Windows?
 TARGET_INCLUDE_DIRECTORIES(${G3LOG_LIBRARY} PUBLIC ${LOG_SRC})
+
+
+# Temporarily disable shared library creation
+#  IF( G3_SHARED_LIB )
+#     IF( WIN32 )
+#        IF(NOT(CMAKE_VERSION LESS 3.4))
+#           set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+#        ELSE()
+#           message( FATAL_ERROR "Need CMake version >=3.4 to build shared windows library!" )
+#        ENDIF()
+#     ENDIF()
+#     #ADD_LIBRARY(${G3LOG_LIBRARY} SHARED ${SRC_FILES})
+#  ELSE()
+  #ADD_LIBRARY(${G3LOG_LIBRARY} STATIC ${SRC_FILES})
+#  ENDIF()
