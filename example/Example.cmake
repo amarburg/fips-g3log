@@ -37,7 +37,7 @@
 
       fips_begin_app(g3log-FATAL-contract cmdline)
         fips_files(${DIR_EXAMPLE}/main_contract.cpp)
-        fips_libs( g3logger ${EXAMPLE_PLATFORM_LINK_LIBRIES})
+        fips_libs( g3log ${EXAMPLE_PLATFORM_LINK_LIBRIES})
       fips_end_app()
 
       # add_executable(g3log-FATAL-sigsegv ${DIR_EXAMPLE}/main_sigsegv.cpp)

@@ -30,6 +30,7 @@
    IF (FIPS_UNITTESTS)
       set(DIR_UNIT_TEST ${g3log_SOURCE_DIR}/test_unit)
       message( STATUS "Building FIPS_UNITTESTS" )
+      include_directories("${CMAKE_BINARY_DIR}/include")
 
       ## Don't use the included GTest, use fips' instead
       # set(GTEST_DIR ${g3log_SOURCE_DIR}/3rdParty/gtest/gtest-1.7.0)
@@ -58,7 +59,7 @@
         gtest_begin(${test})
 
          IF(${test} STREQUAL "test_filechange")
-           # TODO.  Fix this in fips 
+           # TODO.  Fix this in fips
           #  fips_files(
           #     ${DIR_UNIT_TEST}/${test}.cpp
           #     ${helper}
@@ -82,7 +83,7 @@
 
 
         #target_link_libraries(${test} g3logger gtest_170_lib)
-        fips_libs(g3logger)
+        fips_libs(g3log)
         fips_deps(googletest)
       gtest_end()
 
