@@ -1,5 +1,6 @@
 # Enabled exceptions...
+message( STATUS   "fips-G3log requires exceptions, enabling....")
 set(FIPS_EXCEPTIONS on)
 
-# This feels like a hack
-include_directories(${FIPS_BUILD_DIR}/g3log/${FIPS_CONFIG}/include)
+## Allows g3log/generated_definitions.hpp to be found
+fips_include_directories( ${FIPS_PROJECT_BUILD_DIR}/include/ )

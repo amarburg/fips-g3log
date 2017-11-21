@@ -49,10 +49,10 @@
 cmake_minimum_required(VERSION 3.5)
 
 if (NOT FIPS_IMPORT)
-get_filename_component(FIPS_ROOT_DIR "../fips" ABSOLUTE)
-include("${FIPS_ROOT_DIR}/cmake/fips.cmake")
+  get_filename_component(FIPS_ROOT_DIR "../fips" ABSOLUTE)
+  include("${FIPS_ROOT_DIR}/cmake/fips.cmake")
 
-fips_setup(PROJECT g3log)
+  fips_setup(PROJECT g3log)
 endif()
 
 ENABLE_LANGUAGE(CXX)
@@ -101,6 +101,7 @@ IF ( NOT VERSION )
 ENDIF()
 message( STATUS "Software Version: ${VERSION}" )
 
+set( g3log_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 
    # ============================================================================
@@ -164,21 +165,22 @@ message( STATUS "Software Version: ${VERSION}" )
 
 
 
-
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-   # ==========================================================================
-   # BETA : package manager for G3Log,. not yet reliable. Use at your own risk
-   #        only tested on Ubuntu and CentOS
-   #
-   #        For OSX you can install an older version using 'brew install'
-   #
-   # ==========================================================================
-   #   Package handling is done AFTER all other CMake setup
-   #   usage:   make package
-   #   Check the output result and install accordingly.
-   # ==========================================================================
-   INCLUDE (${g3log_SOURCE_DIR}/CPackLists.txt)
-ENDIF()
+if (NOT FIPS_IMPORT)
+  IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+     # ==========================================================================
+     # BETA : package manager for G3Log,. not yet reliable. Use at your own risk
+     #        only tested on Ubuntu and CentOS
+     #
+     #        For OSX you can install an older version using 'brew install'
+     #
+     # ==========================================================================
+     #   Package handling is done AFTER all other CMake setup
+     #   usage:   make package
+     #   Check the output result and install accordingly.
+     # ==========================================================================
+     INCLUDE (${CMAKE_CURRENT_SOURCE_DIR}/CPackLists.txt)
+  ENDIF()
+endif()
 
 
 IF (NOT MSVC)
