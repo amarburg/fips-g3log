@@ -7,7 +7,20 @@ dev:
     - script:
       name: Build
       code: |
-          cmake --version
+          ./fips gen linux-make-unittest
+          ./fips build linux-make-unittest
+          ./fips run test_messageTest
+          ./fips run test_filechangeTest
+          ./fips run test_ioTest
+          ./fips run test_cpp_future_conceptsTest
+          ./fips run test_concept_sinkTest
+          ./fips run test_sinkTest
+
+build:
+  steps:
+    - script:
+      name: Build
+      code: |
           ./fips gen linux-make-unittest
           ./fips build linux-make-unittest
           ./fips run test_messageTest
