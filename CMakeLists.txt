@@ -46,15 +46,20 @@
 #
 # ============================================================================
 
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
+
+if (NOT FIPS_IMPORT)
+get_filename_component(FIPS_ROOT_DIR "../fips" ABSOLUTE)
+include("${FIPS_ROOT_DIR}/cmake/fips.cmake")
+
+fips_setup(PROJECT g3log)
+endif()
+
 ENABLE_LANGUAGE(CXX)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT (MSVC_IDE OR XCODE))
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type, one of: Release, Debug" FORCE)
 endif()
-
-
-project (g3log)
 
 message( STATUS "Build type: ${CMAKE_BUILD_TYPE}" )
 message( STATUS "Configuration types: ${CMAKE_CONFIGURATION_TYPES}" )
@@ -76,23 +81,23 @@ IF ( NOT VERSION )
       message("windows: Extracting git software version")
       execute_process(COMMAND powershell "(git rev-list --branches HEAD | Measure-Object -line).Lines" OUTPUT_VARIABLE GIT_VERSION WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
    ELSE()
-      IF(UNIX OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
-         message( STATUS "nix: Extracting git software version" ) 
+      IF(UNIX OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+         message( STATUS "nix: Extracting git software version" )
       ELSE()
-         message( STATUS "unknown platform: extracting git software version" ) 
+         message( STATUS "unknown platform: extracting git software version" )
       ENDIF()
       execute_process(COMMAND bash "-c" "git rev-list --branches HEAD | wc -l | tr -d ' ' | tr -d '\n'" OUTPUT_VARIABLE GIT_VERSION WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
    ENDIF()
- 
+
    SET(MINOR_VERSION 3)
    math(EXPR VERSION-BASE ${GIT_VERSION}/255)
    math(EXPR VERSION-REMAINDER ${GIT_VERSION}%255)
-   message( STATUS "git build version: ${GIT_VERSION}" ) 
-   message( STATUS "version base: ${VERSION-BASE}" ) 
-   message( STATUS "version remainder: ${VERSION-REMAINDER}" ) 
+   message( STATUS "git build version: ${GIT_VERSION}" )
+   message( STATUS "version base: ${VERSION-BASE}" )
+   message( STATUS "version remainder: ${VERSION-REMAINDER}" )
    # SET(BUILD_NUMBER ${GIT_VERSION})
-   SET(BUILD_NUMBER ${VERSION-BASE}) 
-   SET(VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${BUILD_NUMBER}-${VERSION-REMAINDER}) 
+   SET(BUILD_NUMBER ${VERSION-BASE})
+   SET(VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${BUILD_NUMBER}-${VERSION-REMAINDER})
 ENDIF()
 message( STATUS "Software Version: ${VERSION}" )
 
@@ -158,7 +163,7 @@ message( STATUS "Software Version: ${VERSION}" )
    INCLUDE (${g3log_SOURCE_DIR}/test_unit/Test.cmake)
 
 
-   
+
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
    # ==========================================================================
@@ -189,7 +194,6 @@ IF (NOT MSVC)
    )
 ENDIF()
 
-
-
-
-
+if (NOT FIPS_IMPORT)
+	fips_finish()
+endif()

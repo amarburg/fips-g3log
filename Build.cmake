@@ -56,6 +56,8 @@ ELSEIF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
        # deal with ERROR level conflicts with windows.h
        ADD_DEFINITIONS (-DNOGDI)
    ELSE()
+      set(FIPS_EXCEPTIONS ON)
+
        set(PLATFORM_LINK_LIBRIES rt)
        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -rdynamic -Wunused -std=c++14 -pthread -lrt -D_GLIBCXX_USE_NANOSLEEP -D_GLIBCXX_USE_SCHED_YIELD")
    ENDIF()
@@ -87,54 +89,57 @@ IF (MSVC OR MINGW)
    message( STATUS "" )
 ENDIF()
 
-   # GENERIC STEPS
-   file(GLOB SRC_FILES ${LOG_SRC}/g3log/*.h ${LOG_SRC}/g3log/*.hpp ${LOG_SRC}/*.cpp ${LOG_SRC}/*.ipp)
-   file(GLOB HEADER_FILES ${LOG_SRC}/g3log/*.hpp ${LOG_SRC}/*.hpp)
-   
-   list( APPEND HEADER_FILES ${GENERATED_G3_DEFINITIONS} )
-   list( APPEND SRC_FILES ${GENERATED_G3_DEFINITIONS} )
+# GENERIC STEPS
+file(GLOB SRC_FILES ${LOG_SRC}/g3log/*.h ${LOG_SRC}/g3log/*.hpp ${LOG_SRC}/*.cpp ${LOG_SRC}/*.ipp)
+file(GLOB HEADER_FILES ${LOG_SRC}/g3log/*.hpp ${LOG_SRC}/*.hpp)
 
-   IF (MSVC OR MINGW)
-      list(REMOVE_ITEM SRC_FILES  ${LOG_SRC}/crashhandler_unix.cpp)
-   ELSE()
-      list(REMOVE_ITEM SRC_FILES  ${LOG_SRC}/crashhandler_windows.cpp ${LOG_SRC}/g3log/stacktrace_windows.hpp ${LOG_SRC}/stacktrace_windows.cpp)
-   ENDIF (MSVC OR MINGW)
+list( APPEND HEADER_FILES ${GENERATED_G3_DEFINITIONS} )
+list( APPEND SRC_FILES ${GENERATED_G3_DEFINITIONS} )
 
-   set(SRC_FILES ${SRC_FILES} ${SRC_PLATFORM_SPECIFIC})
+IF (MSVC OR MINGW)
+  list(REMOVE_ITEM SRC_FILES  ${LOG_SRC}/crashhandler_unix.cpp)
+ELSE()
+  list(REMOVE_ITEM SRC_FILES  ${LOG_SRC}/crashhandler_windows.cpp ${LOG_SRC}/g3log/stacktrace_windows.hpp ${LOG_SRC}/stacktrace_windows.cpp)
+ENDIF (MSVC OR MINGW)
 
-   # Create the g3log library
-   INCLUDE_DIRECTORIES(${LOG_SRC})
-   SET(G3LOG_LIBRARY g3logger)
+set(SRC_FILES ${SRC_FILES} ${SRC_PLATFORM_SPECIFIC})
 
-   IF( G3_SHARED_LIB )
-      IF( WIN32 )
-         IF(NOT(CMAKE_VERSION LESS 3.4))
-            set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-         ELSE()
-            message( FATAL_ERROR "Need CMake version >=3.4 to build shared windows library!" )
-         ENDIF()
-      ENDIF()
-      ADD_LIBRARY(${G3LOG_LIBRARY} SHARED ${SRC_FILES})
-   ELSE()
-      ADD_LIBRARY(${G3LOG_LIBRARY} STATIC ${SRC_FILES})
-   ENDIF()
+# Create the g3log library
+INCLUDE_DIRECTORIES(${LOG_SRC})
+SET(G3LOG_LIBRARY g3logger)
 
-   SET(${G3LOG_LIBRARY}_VERSION_STRING ${VERSION})
-   MESSAGE( STATUS "Creating ${G3LOG_LIBRARY} VERSION: ${VERSION}" )
-   SET_TARGET_PROPERTIES(g3logger PROPERTIES LINKER_LANGUAGE CXX SOVERSION ${VERSION})
+# Temporarily disable shared library creation
+#  IF( G3_SHARED_LIB )
+#     IF( WIN32 )
+#        IF(NOT(CMAKE_VERSION LESS 3.4))
+#           set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+#        ELSE()
+#           message( FATAL_ERROR "Need CMake version >=3.4 to build shared windows library!" )
+#        ENDIF()
+#     ENDIF()
+#     #ADD_LIBRARY(${G3LOG_LIBRARY} SHARED ${SRC_FILES})
+#  ELSE()
+  #ADD_LIBRARY(${G3LOG_LIBRARY} STATIC ${SRC_FILES})
 
-   set_target_properties(${G3LOG_LIBRARY} PROPERTIES
-      LINKER_LANGUAGE CXX
-      OUTPUT_NAME g3logger
-      CLEAN_DIRECT_OUTPUT 1)
+  FIPS_BEGIN_MODULE( ${G3LOG_LIBRARY} )
+    fips_files( ${SRC_FILES} )
+  FIPS_END_MODULE()
+#  ENDIF()
 
-   IF(APPLE)
-      set_target_properties(${G3LOG_LIBRARY} PROPERTIES MACOSX_RPATH TRUE)
-   ENDIF()
+SET(${G3LOG_LIBRARY}_VERSION_STRING ${VERSION})
+MESSAGE( STATUS "Creating ${G3LOG_LIBRARY} VERSION: ${VERSION}" )
+SET_TARGET_PROPERTIES(g3logger PROPERTIES LINKER_LANGUAGE CXX SOVERSION ${VERSION})
 
-   TARGET_LINK_LIBRARIES(${G3LOG_LIBRARY} ${PLATFORM_LINK_LIBRIES})
+set_target_properties(${G3LOG_LIBRARY} PROPERTIES
+  LINKER_LANGUAGE CXX
+  OUTPUT_NAME g3logger
+  CLEAN_DIRECT_OUTPUT 1)
 
-   # Kjell: This is likely not necessary, except for Windows?
-   TARGET_INCLUDE_DIRECTORIES(${G3LOG_LIBRARY} PUBLIC ${LOG_SRC})
+IF(APPLE)
+  set_target_properties(${G3LOG_LIBRARY} PROPERTIES MACOSX_RPATH TRUE)
+ENDIF()
 
+TARGET_LINK_LIBRARIES(${G3LOG_LIBRARY} ${PLATFORM_LINK_LIBRIES})
 
+# Kjell: This is likely not necessary, except for Windows?
+TARGET_INCLUDE_DIRECTORIES(${G3LOG_LIBRARY} PUBLIC ${LOG_SRC})

@@ -1,5 +1,5 @@
 # g3log is a KjellKod Logger
-# 2015 @author Kjell Hedström, hedstrom@kjellkod.cc 
+# 2015 @author Kjell Hedström, hedstrom@kjellkod.cc
 # ==================================================================
 # 2015 by KjellKod.cc. This is PUBLIC DOMAIN to use at your own
 #    risk and comes  with no warranties.
@@ -10,13 +10,13 @@
 
 
 
-   
+
 
 # ==============================================================
    #   -DUSE_SIMPLE_EXAMPLE=OFF   : to turn off the fatal examples
    #
-   #    
-   #  Leaving it to ON will create 
+   #
+   #  Leaving it to ON will create
    #                        g3log-FATAL-sigsegv
    #                        g3log-FATAL-contract
    #
@@ -34,13 +34,18 @@
       message( STATUS "-DADD_FATAL_EXAMPLE=ON" )
       message( STATUS "\t\t[contract][sigsegv][fatal choice] are examples of when g3log comes in handy\n" )
       include_directories (${DIR_EXAMPLE})
-      add_executable(g3log-FATAL-contract ${DIR_EXAMPLE}/main_contract.cpp)
-      add_executable(g3log-FATAL-sigsegv ${DIR_EXAMPLE}/main_sigsegv.cpp)
-      add_executable(g3log-FATAL-choice ${DIR_EXAMPLE}/main_fatal_choice.cpp)
-      
-      target_link_libraries(g3log-FATAL-contract ${G3LOG_LIBRARY} ${EXAMPLE_PLATFORM_LINK_LIBRIES})
-      target_link_libraries(g3log-FATAL-sigsegv ${G3LOG_LIBRARY} ${EXAMPLE_PLATFORM_LINK_LIBRIES})
-      target_link_libraries(g3log-FATAL-choice ${G3LOG_LIBRARY} ${EXAMPLE_PLATFORM_LINK_LIBRIES})
+
+      fips_begin_app(g3log-FATAL-contract cmdline)
+        fips_files(${DIR_EXAMPLE}/main_contract.cpp)
+        fips_libs(${G3LOG_LIBRARY} ${EXAMPLE_PLATFORM_LINK_LIBRIES})
+      fips_end_app()
+
+      # add_executable(g3log-FATAL-sigsegv ${DIR_EXAMPLE}/main_sigsegv.cpp)
+      # add_executable(g3log-FATAL-choice ${DIR_EXAMPLE}/main_fatal_choice.cpp)
+
+      # target_link_libraries(g3log-FATAL-contract ${G3LOG_LIBRARY} ${EXAMPLE_PLATFORM_LINK_LIBRIES})
+      # target_link_libraries(g3log-FATAL-sigsegv ${G3LOG_LIBRARY} ${EXAMPLE_PLATFORM_LINK_LIBRIES})
+      # target_link_libraries(g3log-FATAL-choice ${G3LOG_LIBRARY} ${EXAMPLE_PLATFORM_LINK_LIBRIES})
    ELSE()
        message( STATUS "-DADD_SIMPLE_EXAMPLE=OFF" )
    ENDIF (ADD_FATAL_EXAMPLE)
