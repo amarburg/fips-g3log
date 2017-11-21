@@ -6,4 +6,4 @@ exports:
   header-dirs:
     - src/
   modules:
-    g3logger: .
+    g3logger: src/
