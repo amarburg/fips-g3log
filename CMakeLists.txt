@@ -196,6 +196,10 @@ IF (NOT MSVC)
    )
 ENDIF()
 
+if( NOT FIPS_EXCEPTIONS )
+  message( SEND_ERROR "g3log requires FIPS_EXCEPTIONS, please add it to the current build configuration")
+endif()
+
 if (NOT FIPS_IMPORT)
 	fips_finish()
 endif()
