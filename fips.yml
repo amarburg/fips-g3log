@@ -7,3 +7,6 @@ exports:
     - src/
   modules:
     g3logger: .
+
+defines:
+    FIPS_EXCEPTIONS: ON
