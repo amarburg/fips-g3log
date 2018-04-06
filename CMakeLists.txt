@@ -139,7 +139,9 @@ set( g3log_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
    #==========================================================================
    INCLUDE (${g3log_SOURCE_DIR}/Build.cmake)
 
-
+  # Examples, performance tests, and unit tests are disabled when importing
+  # from other fips projects
+  IF(NOT FIPS_IMPORT)
 
    # ============================================================================
    # EXAMPLE OPTIONS: By defauls is ON. This will create 'g3log-FATAL-* examples'
@@ -163,24 +165,21 @@ set( g3log_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
    # ENABLE WITH:  -DADD_G3LOG_UNIT_TEST=ON
    INCLUDE (${g3log_SOURCE_DIR}/test_unit/Test.cmake)
 
-
-
-if (NOT FIPS_IMPORT)
-  IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-     # ==========================================================================
-     # BETA : package manager for G3Log,. not yet reliable. Use at your own risk
-     #        only tested on Ubuntu and CentOS
-     #
-     #        For OSX you can install an older version using 'brew install'
-     #
-     # ==========================================================================
-     #   Package handling is done AFTER all other CMake setup
-     #   usage:   make package
-     #   Check the output result and install accordingly.
-     # ==========================================================================
-     INCLUDE (${CMAKE_CURRENT_SOURCE_DIR}/CPackLists.txt)
+    IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+       # ==========================================================================
+       # BETA : package manager for G3Log,. not yet reliable. Use at your own risk
+       #        only tested on Ubuntu and CentOS
+       #
+       #        For OSX you can install an older version using 'brew install'
+       #
+       # ==========================================================================
+       #   Package handling is done AFTER all other CMake setup
+       #   usage:   make package
+       #   Check the output result and install accordingly.
+       # ==========================================================================
+       INCLUDE (${CMAKE_CURRENT_SOURCE_DIR}/CPackLists.txt)
+    ENDIF()
   ENDIF()
-endif()
 
 
 IF (NOT MSVC)
