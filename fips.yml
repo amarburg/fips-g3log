@@ -6,7 +6,7 @@ exports:
   header-dirs:
     - src/
   modules:
-    g3logger: .
+    g3log: .
 
 defines:
     FIPS_EXCEPTIONS: ON
