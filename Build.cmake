@@ -131,7 +131,7 @@ endif()
 
 set_target_properties(${G3LOG_LIBRARY} PROPERTIES
   LINKER_LANGUAGE CXX
-  OUTPUT_NAME g3logger
+  OUTPUT_NAME g3log
   CLEAN_DIRECT_OUTPUT 1)
 
 IF(APPLE)
